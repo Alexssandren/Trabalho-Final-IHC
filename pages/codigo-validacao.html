@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Código de Validação - UFSC IHC Redesign</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <style>
+        body {
+            padding: var(--spacing-xl);
+            background-color: var(--color-bg-secondary);
+        }
+        .code-container {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: var(--spacing-xl);
+            border-radius: var(--border-radius-lg);
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: var(--font-size-sm);
+            line-height: 1.6;
+            margin: var(--spacing-xl) 0;
+        }
+        .code-header {
+            background: var(--color-primary);
+            color: white;
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+            margin: 0;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: var(--spacing-lg);
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../../index.html#problemas" class="back-link">← Voltar para Problemas Identificados</a>
+        <h1>Código de Validação em Tempo Real</h1>
+        <p class="text-secondary">
+            Este código implementa validação em tempo real de formulários, máscaras de entrada e feedback visual,
+            corrigindo o Problema #6 identificado na análise.
+        </p>
+        
+        <div class="code-header">
+            <strong>assets/js/main.js</strong> - Funções de Validação
+        </div>
+        <div class="code-container">
+            <pre><code>/**
+ * Script principal do protótipo UFSC IHC Redesign
+ * Funcionalidades de interatividade e acessibilidade
+ */
+
+(function() {
+    'use strict';
+
+    // ============================================
+    // Validação de Formulários em Tempo Real
+    // ============================================
+    
+    function initFormValidation() {
+        const forms = document.querySelectorAll('form[data-validate]');
+        
+        forms.forEach(form => {
+            const inputs = form.querySelectorAll('input, textarea, select');
+            
+            inputs.forEach(input => {
+                // Validação em tempo real
+                input.addEventListener('blur', function() {
+                    validateField(input);
+                });
+                
+                // Feedback visual durante digitação
+                input.addEventListener('input', function() {
+                    if (input.classList.contains('is-invalid')) {
+                        validateField(input);
+                    }
+                });
+            });
+            
+            // Validação no submit
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+                inputs.forEach(input => {
+                    if (!validateField(input)) {
+                        isValid = false;
+                    }
+                });
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    // Focar no primeiro campo inválido
+                    const firstInvalid = form.querySelector('.is-invalid');
+                    if (firstInvalid) {
+                        firstInvalid.focus();
+                    }
+                }
+            });
+        });
+    }
+    
+    function validateField(field) {
+        const value = field.value.trim();
+        const type = field.type;
+        const required = field.hasAttribute('required');
+        let isValid = true;
+        let errorMessage = '';
+        
+        // Validação de campo obrigatório
+        if (required && !value) {
+            isValid = false;
+            errorMessage = 'Este campo é obrigatório';
+        }
+        
+        // Validação de email
+        if (type === 'email' && value) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(value)) {
+                isValid = false;
+                errorMessage = 'Digite um email válido';
+            }
+        }
+        
+        // Validação de CPF
+        if (field.hasAttribute('data-cpf') && value) {
+            const cpf = value.replace(/\D/g, '');
+            if (cpf.length !== 11 || !isValidCPF(cpf)) {
+                isValid = false;
+                errorMessage = 'Digite um CPF válido';
+            }
+        }
+        
+        // Validação de telefone
+        if (field.hasAttribute('data-phone') && value) {
+            const phone = value.replace(/\D/g, '');
+            if (phone.length < 10 || phone.length > 11) {
+                isValid = false;
+                errorMessage = 'Digite um telefone válido';
+            }
+        }
+        
+        // Atualizar estado visual
+        updateFieldState(field, isValid, errorMessage);
+        
+        return isValid;
+    }
+    
+    function updateFieldState(field, isValid, errorMessage) {
+        const feedback = field.parentElement.querySelector('.form-feedback');
+        
+        field.classList.remove('is-valid', 'is-invalid');
+        
+        if (field.value.trim()) {
+            field.classList.add(isValid ? 'is-valid' : 'is-invalid');
+        }
+        
+        if (feedback) {
+            feedback.textContent = errorMessage;
+            feedback.className = 'form-feedback ' + (isValid ? 'form-feedback-success' : 'form-feedback-error');
+        }
+    }
+    
+    function isValidCPF(cpf) {
+        if (/^(\d)\1{10}$/.test(cpf)) return false;
+        
+        let sum = 0;
+        for (let i = 0; i < 9; i++) {
+            sum += parseInt(cpf.charAt(i)) * (10 - i);
+        }
+        let digit = 11 - (sum % 11);
+        if (digit >= 10) digit = 0;
+        if (digit !== parseInt(cpf.charAt(9))) return false;
+        
+        sum = 0;
+        for (let i = 0; i < 10; i++) {
+            sum += parseInt(cpf.charAt(i)) * (11 - i);
+        }
+        digit = 11 - (sum % 11);
+        if (digit >= 10) digit = 0;
+        if (digit !== parseInt(cpf.charAt(10))) return false;
+        
+        return true;
+    }
+
+    // ============================================
+    // Máscaras de Entrada
+    // ============================================
+    
+    function initInputMasks() {
+        // Máscara de CPF
+        document.querySelectorAll('[data-cpf]').forEach(input => {
+            input.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length <= 11) {
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                    e.target.value = value;
+                }
+            });
+        });
+        
+        // Máscara de telefone
+        document.querySelectorAll('[data-phone]').forEach(input => {
+            input.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length <= 11) {
+                    if (value.length <= 10) {
+                        value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                        value = value.replace(/(\d{4})(\d)/, '$1-$2');
+                    } else {
+                        value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                        value = value.replace(/(\d{5})(\d)/, '$1-$2');
+                    }
+                    e.target.value = value;
+                }
+            });
+        });
+    }
+
+    // Inicialização
+    function init() {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+            return;
+        }
+        
+        initFormValidation();
+        initInputMasks();
+    }
+    
+    init();
+})();</code></pre>
+        </div>
+        
+        <div style="margin-top: var(--spacing-xl); padding: var(--spacing-lg); background: white; border-radius: var(--border-radius-md);">
+            <h3>Principais Funcionalidades:</h3>
+            <ul>
+                <li><strong>Validação em tempo real:</strong> Campos são validados durante a digitação e ao perder o foco</li>
+                <li><strong>Máscaras de entrada:</strong> Formatação automática para CPF e telefone</li>
+                <li><strong>Feedback visual:</strong> Classes CSS adicionadas dinamicamente para indicar estado válido/inválido</li>
+                <li><strong>Mensagens de erro:</strong> Feedback descritivo e acionável para o usuário</li>
+                <li><strong>Validação de CPF:</strong> Algoritmo completo de validação de dígitos verificadores</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
+

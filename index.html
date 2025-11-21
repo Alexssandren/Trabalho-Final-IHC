@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Análise crítica e redesign de interface do site UFSC.br - Identificando e documentando problemas reais de IHC">
+    <title>Análise Crítica e Redesign - Site UFSC.br | IHC</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/modal.css">
+    <link rel="stylesheet" href="assets/css/versions.css">
+    <link rel="stylesheet" href="assets/css/comparison.css">
+    
+    <style>
+        .hero {
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+            color: white;
+            padding: var(--spacing-3xl) 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            color: white;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .hero p {
+            font-size: var(--font-size-xl);
+            margin-bottom: var(--spacing-xl);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .problems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-3xl) 0;
+        }
+        
+        .problem-card {
+            border-left: 4px solid var(--color-primary);
+        }
+        
+        .problem-number {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            background-color: var(--color-primary);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .section {
+            padding: var(--spacing-3xl) 0;
+        }
+        
+        .section-alt {
+            background-color: var(--color-bg-secondary);
+        }
+        
+        .cta-section {
+            background-color: var(--color-primary);
+            color: white;
+            text-align: center;
+            padding: var(--spacing-3xl) 0;
+        }
+        
+        .cta-section h2 {
+            color: white;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: var(--spacing-xl);
+        }
+
+        /* Cards Expandidos de Problemas */
+        .problems-grid-expanded {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-2xl);
+            margin: var(--spacing-3xl) 0;
+        }
+
+        .problem-card-expanded {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: var(--spacing-xl);
+            transition: all var(--transition-base);
+            border-left: 4px solid var(--color-primary);
+        }
+
+        .problem-card-expanded:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .problem-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 2px solid var(--color-border-light);
+        }
+
+        .problem-header .problem-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background-color: var(--color-primary);
+            color: white;
+            border-radius: 50%;
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            flex-shrink: 0;
+        }
+
+        .problem-header h3 {
+            flex: 1;
+            margin: 0;
+            color: var(--color-text-primary);
+            font-size: var(--font-size-xl);
+        }
+
+        .heuristics-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+        }
+
+        .badge-heuristic {
+            display: inline-block;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--border-radius-sm);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+            cursor: help;
+            transition: all var(--transition-fast);
+        }
+
+        .badge-heuristic[data-heuristic="1"] {
+            background-color: #E3F2FD;
+            color: #1976D2;
+        }
+
+        .badge-heuristic[data-heuristic="2"] {
+            background-color: #E8F5E9;
+            color: #388E3C;
+        }
+
+        .badge-heuristic[data-heuristic="3"] {
+            background-color: #FFF3E0;
+            color: #F57C00;
+        }
+
+        .badge-heuristic[data-heuristic="4"] {
+            background-color: #F3E5F5;
+            color: #7B1FA2;
+        }
+
+        .badge-heuristic[data-heuristic="5"] {
+            background-color: #FFEBEE;
+            color: #C62828;
+        }
+
+        .badge-heuristic[data-heuristic="6"] {
+            background-color: #FFFDE7;
+            color: #F9A825;
+        }
+
+        .badge-heuristic[data-heuristic="7"] {
+            background-color: #E0F7FA;
+            color: #00838F;
+        }
+
+        .badge-heuristic[data-heuristic="8"] {
+            background-color: #F5F5F5;
+            color: #616161;
+        }
+
+        .badge-heuristic[data-heuristic="9"] {
+            background-color: #FCE4EC;
+            color: #C2185B;
+        }
+
+        .badge-heuristic[data-heuristic="10"] {
+            background-color: #EFEBE9;
+            color: #5D4037;
+        }
+
+        .badge-wcag {
+            background-color: #E1F5FE;
+            color: #0277BD;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--border-radius-sm);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-semibold);
+        }
+
+        .badge-heuristic:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .problem-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+            padding: var(--spacing-lg);
+            background-color: var(--color-bg-secondary);
+            border-radius: var(--border-radius-md);
+        }
+
+        .comparison-before,
+        .comparison-after {
+            padding: var(--spacing-md);
+        }
+
+        .comparison-before h4,
+        .comparison-after h4 {
+            margin-top: 0;
+            margin-bottom: var(--spacing-md);
+            font-size: var(--font-size-lg);
+        }
+
+        .comparison-before h4 {
+            color: var(--color-error);
+        }
+
+        .comparison-after h4 {
+            color: var(--color-success);
+        }
+
+        .comparison-before ul,
+        .comparison-after ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .comparison-before li,
+        .comparison-after li {
+            padding: var(--spacing-xs) 0;
+            padding-left: var(--spacing-md);
+            position: relative;
+        }
+
+        .comparison-before li::before {
+            content: "✗";
+            position: absolute;
+            left: 0;
+            color: var(--color-error);
+            font-weight: bold;
+        }
+
+        .comparison-after li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--color-success);
+            font-weight: bold;
+        }
+
+        .problem-corrections {
+            margin: var(--spacing-lg) 0;
+            padding: var(--spacing-lg);
+            background-color: rgba(0, 51, 102, 0.05);
+            border-radius: var(--border-radius-md);
+        }
+
+        .problem-corrections h4 {
+            margin-top: 0;
+            margin-bottom: var(--spacing-md);
+            color: var(--color-primary);
+        }
+
+        .corrections-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .corrections-list li {
+            padding: var(--spacing-sm) 0;
+            padding-left: var(--spacing-lg);
+            position: relative;
+            color: var(--color-text-primary);
+        }
+
+        .corrections-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--color-success);
+            font-weight: bold;
+            font-size: var(--font-size-lg);
+        }
+
+        .problem-theory {
+            margin: var(--spacing-lg) 0;
+            padding: var(--spacing-md);
+            background-color: rgba(255, 193, 7, 0.1);
+            border-left: 4px solid var(--color-warning);
+            border-radius: var(--border-radius-sm);
+        }
+
+        .problem-theory p {
+            margin: 0;
+            font-size: var(--font-size-sm);
+            line-height: 1.6;
+            color: var(--color-text-secondary);
+        }
+
+        .problem-theory strong {
+            color: var(--color-text-primary);
+        }
+
+        .problem-actions {
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid var(--color-border-light);
+        }
+
+        .problem-actions .btn {
+            width: 100%;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .problem-comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .problem-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .problem-header h3 {
+                font-size: var(--font-size-lg);
+            }
+
+            .problems-grid-expanded {
+                gap: var(--spacing-xl);
+            }
+        }
+
+        /* Centralização da navegação */
+        .navbar-content {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .navbar-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .navbar-brand {
+            text-align: center;
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-primary);
+            text-decoration: none;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: var(--spacing-lg);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-link {
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--border-radius-sm);
+            transition: all var(--transition-fast);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--color-primary);
+            background-color: rgba(0, 51, 102, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navegação -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <div class="navbar-center">
+                    <a href="index.html" class="navbar-brand">UFSC IHC Redesign</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Análise Crítica e Redesign de Interface</h1>
+            <p>Identificando e documentando problemas reais de Interação Humano-Computador (IHC) no site institucional da UFSC</p>
+            <a href="#problemas" class="btn btn-secondary">Ver Análise</a>
+        </div>
+    </section>
+
+    <!-- Sobre o Projeto -->
+    <section class="section">
+        <div class="container">
+            <h2>Sobre o Projeto</h2>
+            <p>
+                Este projeto consiste em uma análise crítica do site institucional da Universidade Federal de Santa Catarina (UFSC), 
+                identificando problemas reais de usabilidade, acessibilidade e interação. Cada problema identificado é fundamentado 
+                teoricamente com base nas heurísticas de Nielsen e princípios de IHC, e soluções práticas são propostas através 
+                de um protótipo mockado.
+            </p>
+            <p>
+                O objetivo é demonstrar como princípios teóricos de IHC podem ser aplicados na prática para melhorar a experiência 
+                do usuário em sistemas reais, consolidando o conhecimento adquirido na disciplina de Interface Humano-Computador.
+            </p>
+        </div>
+    </section>
+
+    <!-- Comparação: Vídeo vs Versão Corrigida -->
+    <section id="comparacao" class="section section-alt" style="padding-left: 0; padding-right: 0;">
+        <div class="container" style="max-width: 100%; padding-left: var(--spacing-xl); padding-right: var(--spacing-xl);">
+            <div class="comparison-intro">
+                <h2>Comparação: Site Original vs. Versão Corrigida</h2>
+                <p>
+                    Abaixo você pode comparar a homepage original do site ufsc.br (vídeo à esquerda) 
+                    com a versão corrigida que implementa todas as melhorias de IHC identificadas (à direita).
+                </p>
+            </div>
+            
+            <div class="comparison-container">
+                <!-- Vídeo do Site Original -->
+                <div class="comparison-panel">
+                    <span class="comparison-label old">VERSÃO ORIGINAL</span>
+                    <h3>Site UFSC.br - Homepage Original</h3>
+                    <div class="video-container">
+                        <video controls preload="metadata" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;">
+                            <source src="assets/videos/homepage-ufsc.mp4" type="video/mp4">
+                            <source src="assets/videos/homepage-ufsc.webm" type="video/webm">
+                            <div class="video-placeholder">
+                                Seu navegador não suporta vídeo HTML5.<br>
+                                Por favor, coloque o vídeo em: assets/videos/homepage-ufsc.mp4
+                            </div>
+                        </video>
+                    </div>
+                    <div class="comparison-description">
+                        <strong>Vídeo demonstrando:</strong> Navegação pela homepage original do site ufsc.br, 
+                        mostrando os problemas de IHC identificados na análise.
+                    </div>
+                </div>
+                
+                <!-- Versão Corrigida -->
+                <div class="comparison-panel">
+                    <span class="comparison-label new">VERSÃO CORRIGIDA</span>
+                    <h3>Homepage com Todas as Correções</h3>
+                    <div class="version-container">
+                        <video controls preload="metadata" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;">
+                            <source src="assets/videos/homepage-corrected.mp4" type="video/mp4">
+                            <source src="assets/videos/homepage-corrected.webm" type="video/webm">
+                            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; text-align: center; padding: 20px; background-color: #000;">
+                                <div>
+                                    <p style="font-size: 18px; margin-bottom: 10px;">Vídeo da versão corrigida</p>
+                                    <p style="font-size: 14px;">Coloque o vídeo em: assets/videos/homepage-corrected.mp4</p>
+                                </div>
+                            </div>
+                        </video>
+                    </div>
+                    <div class="comparison-description">
+                        <strong>Versão corrigida implementando:</strong> Navegação simplificada, feedback visual, 
+                        hierarquia clara, acessibilidade, linguagem clara, prevenção de erros e consistência visual.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Botão para Preview Fullscreen -->
+            <div style="text-align: center; margin-top: var(--spacing-2xl);">
+                <a href="pages/homepage/" target="_blank" class="btn-preview-fullscreen">
+                    <span style="font-size: var(--font-size-xl); margin-right: var(--spacing-sm);"></span>
+                    Abrir Homepage Corrigida
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problemas Identificados -->
+    <section id="problemas" class="section section-alt">
+        <div class="container">
+            <h2>Problemas Identificados e Correções</h2>
+            <p class="text-secondary mb-lg">
+                Análise comparativa entre o site original ufsc.br e a versão corrigida, fundamentada nas 
+                10 Heurísticas de Usabilidade de Jakob Nielsen. Cada problema apresenta comparação visual 
+                e lista detalhada das correções implementadas.
+            </p>
+            
+            <div class="problems-grid-expanded">
+                <!-- Problema 1: Navegação Complexa -->
+                <div class="problem-card-expanded">
+                    <div class="problem-header">
+                        <span class="problem-number">1</span>
+                        <h3>Navegação Complexa e Sobrecarga Cognitiva</h3>
+                        <div class="heuristics-badges">
+                            <span class="badge badge-heuristic" data-heuristic="6" title="Reconhecimento em vez de recordação">#6</span>
+                            <span class="badge badge-heuristic" data-heuristic="8" title="Estética e design minimalista">#8</span>
+                            <span class="badge badge-heuristic" data-heuristic="3" title="Controle e liberdade do usuário">#3</span>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-comparison">
+                        <div class="comparison-before">
+                            <h4>❌ Site Original</h4>
+                            <ul>
+                                <li>Menu com 50+ links simultâneos</li>
+                                <li>Múltiplos níveis hierárquicos confusos</li>
+                                <li>Sobrecarga cognitiva para usuários</li>
+                                <li>Dificuldade em localizar informações</li>
+                            </ul>
+                        </div>
+                        <div class="comparison-after">
+                            <h4>✅ Versão Corrigida</h4>
+                            <ul>
+                                <li>Menu simplificado (6 itens principais)</li>
+                                <li>Seção "Acesso Rápido" com cards visuais</li>
+                                <li>Busca destacada e acessível</li>
+                                <li>Navegação orientada a tarefas do usuário</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-corrections">
+                        <h4>Correções Implementadas:</h4>
+                        <ul class="corrections-list">
+                            <li>✓ Redução do menu principal de 50+ para 6 itens principais</li>
+                            <li>✓ Criação de seção "Acesso Rápido" com 8 serviços mais utilizados</li>
+                            <li>✓ Cards visuais com ícones para identificação rápida</li>
+                            <li>✓ Busca destacada na navegação principal</li>
+                            <li>✓ Estrutura hierárquica clara e intuitiva</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="problem-theory">
+                        <p><strong>Fundamentação:</strong> Nielsen (1994) - Interfaces devem minimizar carga cognitiva, 
+                        apresentando informações de forma clara e hierárquica. Norman (2013) enfatiza que navegação 
+                        deve seguir modelos mentais intuitivos.</p>
+                    </div>
+                    
+                    <div class="problem-actions">
+                        <a href="pages/homepage/" target="_blank" class="btn btn-primary">Ver Correção na Homepage</a>
+                    </div>
+                </div>
+
+                <!-- Problema 2: Falta de Feedback Visual -->
+                <div class="problem-card-expanded">
+                    <div class="problem-header">
+                        <span class="problem-number">2</span>
+                        <h3>Falta de Feedback Visual em Interações</h3>
+                        <div class="heuristics-badges">
+                            <span class="badge badge-heuristic" data-heuristic="1" title="Visibilidade do status do sistema">#1</span>
+                            <span class="badge badge-heuristic" data-heuristic="4" title="Consistência e padrões">#4</span>
+                            <span class="badge badge-heuristic" data-heuristic="7" title="Flexibilidade e eficiência de uso">#7</span>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-comparison">
+                        <div class="comparison-before">
+                            <h4>❌ Site Original</h4>
+                            <ul>
+                                <li>Links sem estados hover claros</li>
+                                <li>Botões sem feedback visual</li>
+                                <li>Elementos não indicam interatividade</li>
+                                <li>Incerteza sobre ações do sistema</li>
+                            </ul>
+                        </div>
+                        <div class="comparison-after">
+                            <h4>✅ Versão Corrigida</h4>
+                            <ul>
+                                <li>Estados hover/focus/active em todos elementos</li>
+                                <li>Transições CSS suaves</li>
+                                <li>Indicadores de foco visíveis</li>
+                                <li>Carrossel com controles e indicadores ativos</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-corrections">
+                        <h4>Correções Implementadas:</h4>
+                        <ul class="corrections-list">
+                            <li>✓ Estados hover implementados em links e botões</li>
+                            <li>✓ Transições CSS suaves para feedback visual</li>
+                            <li>✓ Indicadores de foco visíveis para navegação por teclado</li>
+                            <li>✓ Carrossel com indicadores ativos e controles visíveis</li>
+                            <li>✓ Efeitos de elevação em cards ao passar mouse</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="problem-theory">
+                        <p><strong>Fundamentação:</strong> Nielsen (1994) - Sistema deve sempre informar ao usuário o que está 
+                        acontecendo através de feedback apropriado. Norman (2013) enfatiza importância de affordances visuais 
+                        claras que indiquem como elementos podem ser manipulados.</p>
+                    </div>
+                    
+                    <div class="problem-actions">
+                        <a href="pages/homepage/" target="_blank" class="btn btn-primary">Ver Correção na Homepage</a>
+                    </div>
+                </div>
+
+                <!-- Problema 3: Hierarquia Visual -->
+                <div class="problem-card-expanded">
+                    <div class="problem-header">
+                        <span class="problem-number">3</span>
+                        <h3>Hierarquia Visual Inconsistente</h3>
+                        <div class="heuristics-badges">
+                            <span class="badge badge-heuristic" data-heuristic="8" title="Estética e design minimalista">#8</span>
+                            <span class="badge badge-heuristic" data-heuristic="6" title="Reconhecimento em vez de recordação">#6</span>
+                            <span class="badge badge-heuristic" data-heuristic="4" title="Consistência e padrões">#4</span>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-comparison">
+                        <div class="comparison-before">
+                            <h4>❌ Site Original</h4>
+                            <ul>
+                                <li>Múltiplos elementos competindo pela atenção</li>
+                                <li>Sem hierarquia visual clara</li>
+                                <li>Títulos com tamanhos similares</li>
+                                <li>Confusão sobre o que é mais importante</li>
+                            </ul>
+                        </div>
+                        <div class="comparison-after">
+                            <h4>✅ Versão Corrigida</h4>
+                            <ul>
+                                <li>Banner hero dominante no topo</li>
+                                <li>Sistema de tipografia hierárquico claro</li>
+                                <li>Grid system consistente</li>
+                                <li>Contraste e espaçamento adequados</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-corrections">
+                        <h4>Correções Implementadas:</h4>
+                        <ul class="corrections-list">
+                            <li>✓ Carrossel hero com título grande e destaque visual</li>
+                            <li>✓ Sistema de tipografia claro (H1-H6 com tamanhos distintos)</li>
+                            <li>✓ Grid system consistente para organização</li>
+                            <li>✓ Contraste e espaçamento adequados entre seções</li>
+                            <li>✓ Elementos importantes destacados com cores e tamanhos</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="problem-theory">
+                        <p><strong>Fundamentação:</strong> Preece et al. (2015) - Hierarquia visual guia atenção e facilita 
+                        compreensão. O uso adequado de tipografia, espaçamento e contraste cria uma "arquitetura visual" 
+                        que orienta o usuário.</p>
+                    </div>
+                    
+                    <div class="problem-actions">
+                        <a href="pages/homepage/" target="_blank" class="btn btn-primary">Ver Correção na Homepage</a>
+                    </div>
+                </div>
+
+                <!-- Problema 4: Acessibilidade -->
+                <div class="problem-card-expanded">
+                    <div class="problem-header">
+                        <span class="problem-number">4</span>
+                        <h3>Problemas de Acessibilidade</h3>
+                        <div class="heuristics-badges">
+                            <span class="badge badge-heuristic" data-heuristic="1" title="Visibilidade do status do sistema">#1</span>
+                            <span class="badge badge-heuristic" data-heuristic="7" title="Flexibilidade e eficiência de uso">#7</span>
+                            <span class="badge badge-wcag" title="WCAG 2.1">WCAG</span>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-comparison">
+                        <div class="comparison-before">
+                            <h4>❌ Site Original</h4>
+                            <ul>
+                                <li>Contraste insuficiente em textos</li>
+                                <li>Navegação por teclado limitada</li>
+                                <li>Falta de estrutura semântica</li>
+                                <li>Elementos não acessíveis a leitores de tela</li>
+                            </ul>
+                        </div>
+                        <div class="comparison-after">
+                            <h4>✅ Versão Corrigida</h4>
+                            <ul>
+                                <li>Contraste WCAG AA (mínimo 4.5:1)</li>
+                                <li>Navegação por teclado completa</li>
+                                <li>HTML semântico estruturado</li>
+                                <li>Labels descritivos em elementos interativos</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-corrections">
+                        <h4>Correções Implementadas:</h4>
+                        <ul class="corrections-list">
+                            <li>✓ Contraste de cores aumentado (azul #003366 sobre branco)</li>
+                            <li>✓ Navegação por teclado com indicadores de foco visíveis</li>
+                            <li>✓ Estrutura HTML semântica (header, nav, section, footer)</li>
+                            <li>✓ Labels descritivos em todos os elementos interativos</li>
+                            <li>✓ Suporte a leitores de tela melhorado</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="problem-theory">
+                        <p><strong>Fundamentação:</strong> WCAG 2.1 estabelece que textos devem ter contraste mínimo de 4.5:1 
+                        para texto normal. Nielsen (1994) enfatiza que sistemas devem ser acessíveis a todos os usuários, 
+                        independentemente de suas capacidades.</p>
+                    </div>
+                    
+                    <div class="problem-actions">
+                        <a href="pages/homepage/" target="_blank" class="btn btn-primary">Ver Correção na Homepage</a>
+                    </div>
+                </div>
+
+                <!-- Problema 5: Linguagem Técnica -->
+                <div class="problem-card-expanded">
+                    <div class="problem-header">
+                        <span class="problem-number">5</span>
+                        <h3>Linguagem Técnica Não Adequada</h3>
+                        <div class="heuristics-badges">
+                            <span class="badge badge-heuristic" data-heuristic="2" title="Compatibilidade com o mundo real">#2</span>
+                            <span class="badge badge-heuristic" data-heuristic="6" title="Reconhecimento em vez de recordação">#6</span>
+                            <span class="badge badge-heuristic" data-heuristic="10" title="Ajuda e documentação">#10</span>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-comparison">
+                        <div class="comparison-before">
+                            <h4>❌ Site Original</h4>
+                            <ul>
+                                <li>Siglas sem contexto (PROGRAD, PROEX, CAGR)</li>
+                                <li>Jargão acadêmico sem explicações</li>
+                                <li>Terminologia técnica assumindo conhecimento prévio</li>
+                                <li>Barreira de compreensão para novos usuários</li>
+                            </ul>
+                        </div>
+                        <div class="comparison-after">
+                            <h4>✅ Versão Corrigida</h4>
+                            <ul>
+                                <li>Linguagem orientada a tarefas do usuário</li>
+                                <li>Nomes descritivos completos</li>
+                                <li>Textos introdutórios em linguagem clara</li>
+                                <li>Eliminação de siglas desnecessárias</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-corrections">
+                        <h4>Correções Implementadas:</h4>
+                        <ul class="corrections-list">
+                            <li>✓ Menu principal usa linguagem do usuário ("Ensino", "Pesquisa", "Extensão")</li>
+                            <li>✓ Seção "Acesso Rápido" com nomes descritivos completos</li>
+                            <li>✓ Textos introdutórios em linguagem clara e acessível</li>
+                            <li>✓ Eliminação de siglas desnecessárias no menu principal</li>
+                            <li>✓ Contexto fornecido para termos técnicos quando necessário</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="problem-theory">
+                        <p><strong>Fundamentação:</strong> Norman (2013) - Sistemas devem usar linguagem do mundo real, não jargão 
+                        técnico. Nielsen (1994) destaca que interface deve falar a linguagem do usuário, seguindo convenções 
+                        do mundo real.</p>
+                    </div>
+                    
+                    <div class="problem-actions">
+                        <a href="pages/homepage/" target="_blank" class="btn btn-primary">Ver Correção na Homepage</a>
+                    </div>
+                </div>
+
+                <!-- Problema 6: Prevenção de Erros -->
+                <div class="problem-card-expanded">
+                    <div class="problem-header">
+                        <span class="problem-number">6</span>
+                        <h3>Falta de Prevenção de Erros em Formulários</h3>
+                        <div class="heuristics-badges">
+                            <span class="badge badge-heuristic" data-heuristic="5" title="Prevenção de erros">#5</span>
+                            <span class="badge badge-heuristic" data-heuristic="9" title="Ajudar usuários a reconhecer, diagnosticar e recuperar erros">#9</span>
+                            <span class="badge badge-heuristic" data-heuristic="1" title="Visibilidade do status do sistema">#1</span>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-comparison">
+                        <div class="comparison-before">
+                            <h4>❌ Site Original</h4>
+                            <ul>
+                                <li>Validação apenas no submit</li>
+                                <li>Mensagens de erro pouco claras</li>
+                                <li>Sem máscaras de entrada</li>
+                                <li>Usuários descobrem erros tarde demais</li>
+                            </ul>
+                        </div>
+                        <div class="comparison-after">
+                            <h4>✅ Versão Corrigida</h4>
+                            <ul>
+                                <li>Validação em tempo real implementada</li>
+                                <li>Máscaras de entrada para CPF e telefone</li>
+                                <li>Mensagens de erro descritivas</li>
+                                <li>Feedback visual durante preenchimento</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-corrections">
+                        <h4>Correções Implementadas:</h4>
+                        <ul class="corrections-list">
+                            <li>✓ Validação em tempo real implementada (assets/js/main.js)</li>
+                            <li>✓ Máscaras de entrada para CPF e telefone</li>
+                            <li>✓ Mensagens de erro descritivas e acionáveis</li>
+                            <li>✓ Feedback visual durante preenchimento</li>
+                            <li>✓ Prevenção de erros comuns através de design</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="problem-theory">
+                        <p><strong>Fundamentação:</strong> Nielsen (1994) - Melhor prevenir erros do que depender de mensagens 
+                        de erro. Validação em tempo real e feedback imediato reduzem frustração e aumentam eficiência. 
+                        Preece et al. (2015) enfatizam importância de mensagens de erro construtivas.</p>
+                    </div>
+                    
+                    <div class="problem-actions">
+                        <a href="pages/codigo-validacao.html" target="_blank" class="btn btn-primary">Ver Código de Validação</a>
+                    </div>
+                </div>
+
+                <!-- Problema 7: Consistência Visual -->
+                <div class="problem-card-expanded">
+                    <div class="problem-header">
+                        <span class="problem-number">7</span>
+                        <h3>Inconsistência Visual e de Padrões</h3>
+                        <div class="heuristics-badges">
+                            <span class="badge badge-heuristic" data-heuristic="4" title="Consistência e padrões">#4</span>
+                            <span class="badge badge-heuristic" data-heuristic="6" title="Reconhecimento em vez de recordação">#6</span>
+                            <span class="badge badge-heuristic" data-heuristic="3" title="Controle e liberdade do usuário">#3</span>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-comparison">
+                        <div class="comparison-before">
+                            <h4>❌ Site Original</h4>
+                            <ul>
+                                <li>Estilos diferentes entre páginas</li>
+                                <li>Espaçamentos variáveis</li>
+                                <li>Cores não seguem padrão consistente</li>
+                                <li>Elementos similares se comportam diferente</li>
+                            </ul>
+                        </div>
+                        <div class="comparison-after">
+                            <h4>✅ Versão Corrigida</h4>
+                            <ul>
+                                <li>Design system unificado</li>
+                                <li>Componentes padronizados</li>
+                                <li>Paleta de cores consistente</li>
+                                <li>Espaçamentos padronizados</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="problem-corrections">
+                        <h4>Correções Implementadas:</h4>
+                        <ul class="corrections-list">
+                            <li>✓ Design system centralizado (assets/css/style.css)</li>
+                            <li>✓ Paleta de cores consistente (azul UFSC #003366)</li>
+                            <li>✓ Componentes reutilizáveis (botões, cards, formulários)</li>
+                            <li>✓ Espaçamentos padronizados (variáveis CSS)</li>
+                            <li>✓ Tipografia consistente em toda a interface</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="problem-theory">
+                        <p><strong>Fundamentação:</strong> Nielsen (1994) - Usuários não devem se perguntar se palavras, 
+                        situações ou ações diferentes significam a mesma coisa. Consistência reduz carga cognitiva e aumenta 
+                        eficiência. Norman (2013) destaca que padrões consistentes criam affordances previsíveis.</p>
+                    </div>
+                    
+                    <div class="problem-actions">
+                        <a href="pages/homepage/" target="_blank" class="btn btn-primary">Ver Correção na Homepage</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="background-color: var(--color-bg-secondary); padding: var(--spacing-xl) 0; margin-top: var(--spacing-3xl);">
+        <div class="container">
+            <div class="text-center">
+                <p class="text-secondary">
+                    Projeto acadêmico desenvolvido para a disciplina de Interface Humano-Computador (IHC) - UFSC
+                </p>
+                <p class="text-muted" style="margin-top: var(--spacing-md);">
+                    Análise crítica e redesign do site <a href="https://ufsc.br" target="_blank" rel="noopener noreferrer">ufsc.br</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/modal.js"></script>
+</body>
+</html>
+
