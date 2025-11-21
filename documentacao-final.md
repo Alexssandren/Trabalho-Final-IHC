@@ -22,10 +22,8 @@ Felipe F. e Letícia
    4.1. [Problema 1: Navegação Complexa e Sobrecarga Cognitiva](#problema-1-navegação-complexa-e-sobrecarga-cognitiva)
    4.2. [Problema 2: Falta de Feedback Visual em Interações](#problema-2-falta-de-feedback-visual-em-interações)
    4.3. [Problema 3: Hierarquia Visual Inconsistente](#problema-3-hierarquia-visual-inconsistente)
-   4.4. [Problema 4: Problemas de Acessibilidade](#problema-4-problemas-de-acessibilidade)
-   4.5. [Problema 5: Linguagem Técnica Não Adequada](#problema-5-linguagem-técnica-não-adequada)
-   4.6. [Problema 6: Falta de Prevenção de Erros em Formulários](#problema-6-falta-de-prevenção-de-erros-em-formulários)
-   4.7. [Problema 7: Inconsistência Visual e de Padrões](#problema-7-inconsistência-visual-e-de-padrões)
+   4.4. [Problema 4: Linguagem Técnica Não Adequada](#problema-4-linguagem-técnica-não-adequada)
+   4.5. [Problema 5: Inconsistência Visual e de Padrões](#problema-5-inconsistência-visual-e-de-padrões)
 5. [CONCLUSÃO](#5-conclusão)
 6. [REFERÊNCIAS](#6-referências)
 
@@ -244,51 +242,14 @@ Link para protótipo: `pages/homepage/` - Ver hierarquia visual aplicada.
 
 ---
 
-## Problema 4: Problemas de Acessibilidade
 
-### Descrição do Problema
-O site apresenta problemas de acessibilidade que dificultam o uso por pessoas com deficiência. Alguns textos têm contraste insuficiente com o fundo, elementos não são navegáveis via teclado, e falta estrutura semântica adequada para leitores de tela.
-
-### Evidências Visuais
-**Figura 7: Texto com contraste insuficiente**
-*[Inserir screenshot mostrando problemas de contraste]*
-
-### Impacto na Experiência do Usuário
-- **Exclusão**: Usuários com deficiência visual não conseguem usar o site adequadamente
-- **Conformidade legal**: Site pode não estar em conformidade com leis de acessibilidade
-- **Usabilidade geral reduzida**: Problemas de acessibilidade afetam todos os usuários
-- **Frustração**: Usuários que dependem de navegação por teclado ficam presos
-
-### Heurísticas Violadas
-1. **Heurística #1 - Visibilidade do status do sistema**: Elementos não são visíveis para todos os usuários
-2. **Heurística #7 - Flexibilidade e eficiência de uso**: Falta de alternativas de acesso
-3. **Princípios WCAG**: Violação de critérios de contraste (1.4.3) e navegação por teclado (2.1.1)
-
-### Fundamentação Teórica
-As WCAG 2.1 estabelecem que textos devem ter contraste mínimo de 4.5:1 para texto normal e 3:1 para texto grande. Nielsen (1994) enfatiza que sistemas devem ser acessíveis a todos os usuários, independentemente de suas capacidades.
-
-### Proposta de Correção
-**Figura 8: Contraste e navegação por teclado corrigidos**
-*[Inserir screenshot mostrando indicadores de foco e melhor contraste]*
-
-- Contraste de cores aumentado (azul #003366 sobre branco)
-- Navegação por teclado com indicadores de foco visíveis
-- Estrutura HTML semântica (header, nav, section, footer)
-- Labels descritivos em elementos interativos
-- Suporte a leitores de tela melhorado
-
-### Demonstração da Correção
-Link para protótipo: `pages/homepage/` - Testar acessibilidade implementada.
-
----
-
-## Problema 5: Linguagem Técnica Não Adequada
+## Problema 4: Linguagem Técnica Não Adequada
 
 ### Descrição do Problema
 O site utiliza terminologia técnica e jargão acadêmico sem explicações adequadas, assumindo que todos os usuários estão familiarizados com a estrutura organizacional da universidade. Termos como "PROEX", "PROGRAD", "CAGR" aparecem sem contexto.
 
 ### Evidências Visuais
-**Figura 9: Siglas sem contexto no menu de navegação**
+**Figura 7: Siglas sem contexto no menu de navegação**
 *[Inserir screenshot mostrando siglas técnicas no menu]*
 
 ### Impacto na Experiência do Usuário
@@ -306,7 +267,7 @@ O site utiliza terminologia técnica e jargão acadêmico sem explicações adeq
 Norman (2013) enfatiza que sistemas devem usar linguagem familiar ao usuário, seguindo convenções do mundo real. Nielsen (1994) destaca que informações devem aparecer em ordem natural e lógica para o usuário.
 
 ### Proposta de Correção
-**Figura 10: Linguagem do usuário no menu corrigido**
+**Figura 8: Linguagem do usuário no menu corrigido**
 *[Inserir screenshot mostrando nomes descritivos no menu]*
 
 - Menu principal usa linguagem do usuário ("Ensino", "Pesquisa", "Extensão")
@@ -320,51 +281,14 @@ Link para protótipo: `pages/homepage/` - Ver linguagem adequada implementada.
 
 ---
 
-## Problema 6: Falta de Prevenção de Erros em Formulários
 
-### Descrição do Problema
-Formulários do site não possuem validação em tempo real, mensagens de erro claras, ou prevenção de erros comuns. Usuários só descobrem problemas após submeter o formulário, e mensagens de erro não são suficientemente descritivas.
-
-### Evidências Visuais
-**Figura 11: Formulário sem validação em tempo real**
-*[Inserir screenshot de formulário do site original]*
-
-### Impacto na Experiência do Usuário
-- **Frustração**: Usuários precisam refazer formulários inteiros após descobrir erros
-- **Perda de tempo**: Validação apenas no final do processo
-- **Abandono**: Usuários podem desistir de preencher formulários longos
-- **Confusão**: Mensagens de erro não explicam claramente como corrigir
-
-### Heurísticas Violadas
-1. **Heurística #5 - Prevenção de erros**: Sistema não previne erros antes que ocorram
-2. **Heurística #9 - Ajudar usuários a reconhecer, diagnosticar e recuperar erros**: Mensagens de erro não são claras
-3. **Heurística #1 - Visibilidade do status do sistema**: Validação não é visível durante o preenchimento
-
-### Fundamentação Teórica
-Nielsen (1994) destaca que é melhor prevenir erros do que depender de mensagens de erro. Validação em tempo real e feedback imediato reduzem frustração e aumentam eficiência. Preece et al. (2015) enfatizam a importância de mensagens de erro construtivas que guiem o usuário.
-
-### Proposta de Correção
-**Figura 12: Validação em tempo real implementada**
-*[Inserir screenshot do formulário corrigido]*
-
-- Validação em tempo real implementada
-- Máscaras de entrada para CPF e telefone
-- Mensagens de erro descritivas e acionáveis
-- Feedback visual durante preenchimento
-- Prevenção de erros comuns através de design
-
-### Demonstração da Correção
-Link para protótipo: `pages/codigo-validacao.html` - Ver código de validação implementado.
-
----
-
-## Problema 7: Inconsistência Visual e de Padrões
+## Problema 5: Inconsistência Visual e de Padrões
 
 ### Descrição do Problema
 O site apresenta inconsistências visuais entre diferentes páginas e seções. Botões têm estilos diferentes, espaçamentos variam, cores não seguem um padrão consistente, e elementos similares se comportam de forma diferente em contextos distintos.
 
 ### Evidências Visuais
-**Figura 13: Inconsistências visuais entre páginas**
+**Figura 9: Inconsistências visuais entre páginas**
 *[Inserir screenshot comparativo mostrando diferenças de estilo]*
 
 ### Impacto na Experiência do Usuário
@@ -382,7 +306,7 @@ O site apresenta inconsistências visuais entre diferentes páginas e seções. 
 Nielsen (1994) enfatiza que usuários não devem se perguntar se palavras, situações ou ações diferentes significam a mesma coisa. Consistência reduz carga cognitiva e aumenta eficiência. Norman (2013) destaca que padrões consistentes criam affordances previsíveis.
 
 ### Proposta de Correção
-**Figura 14: Design system consistente aplicado**
+**Figura 10: Design system consistente aplicado**
 *[Inserir screenshot mostrando consistência visual]*
 
 - Design system centralizado

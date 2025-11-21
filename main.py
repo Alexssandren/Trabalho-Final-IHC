@@ -39,7 +39,14 @@ def start_server():
         
         def guess_type(self, path):
             """Sobrescreve para adicionar charset UTF-8 em arquivos de texto"""
-            mimetype, encoding = super().guess_type(path)
+            result = super().guess_type(path)
+            # Handle both single return value and tuple return
+            if isinstance(result, tuple):
+                mimetype, encoding = result
+            else:
+                mimetype = result
+                encoding = None
+
             if mimetype and mimetype.startswith('text/'):
                 if 'charset' not in mimetype:
                     mimetype += '; charset=utf-8'
